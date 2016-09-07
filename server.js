@@ -7,7 +7,7 @@ var cors = require('cors');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var wellknown = require('nodemailer-wellknown');
-var envVars = require('./env');
+var envVars = process.env.EMAIL || require('./env');
 var morgan = require('morgan');
 
 var whitelist = ['http://example1.com', 'http://example2.com'];
