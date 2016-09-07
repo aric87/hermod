@@ -4,18 +4,13 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node --use_strict start.js"
   },
   "eslintConfig": {
     "env": {
       "browser": true,
       "node": true
     }
-  },
-  "engines": {
-    "node": "6.5.0",
-    "npm": "3.10.3"
   },
   "repository": {
     "type": "git",
