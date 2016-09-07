@@ -7,9 +7,7 @@ var cors = require('cors');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var wellknown = require('nodemailer-wellknown');
-var envVars = process.env.EMAIL || require('./env');
 var morgan = require('morgan');
-console.log('vars ', envVars);
 var whitelist = ['http://example1.com', 'http://example2.com'];
 var corsOptions = {
   origin: function(origin, callback){
@@ -37,15 +35,15 @@ app.post('/email', cors(), function(req, res) {
     return res.status(400).json({message:`You're missing somet`})
   }
   var smtpTransport = nodemailer.createTransport({
-      service: envVars.email.service,
+      service: process.env.SERVICE,
       auth: {
-              user: envVars.email.user,
-              pass: envVars.email.pass
+              user: process.env.EMAIL,
+              pass: process.env.PASS
           }
   }),
   mailOptions = {
       to: sendTo,
-      from: envVars.email.user,
+      from: process.env.EMAIL,
       subject: subject,
       text: text
   };
