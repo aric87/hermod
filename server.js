@@ -19,7 +19,13 @@ var corsOptions = {
     callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
   }
 };
-
+var smtpTransport = nodemailer.createTransport({
+    service: process.env.SERVICE,
+    auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASS
+        }
+})
 app.options('*', cors());
 app.use(morgan('combined',{stream:accessLogStream})); // log every request to the console
 app.use(bodyParser.json());
@@ -40,14 +46,7 @@ app.post('/email', cors(), function(req, res) {
     }
     return res.status(400).json({message:emessage})
   }
-  var smtpTransport = nodemailer.createTransport({
-      service: process.env.SERVICE,
-      auth: {
-              user: process.env.EMAIL,
-              pass: process.env.PASS
-          }
-  }),
-  mailOptions = {
+  var mailOptions = {
       to: sendTo,
       from: process.env.EMAIL,
       subject: subject,
