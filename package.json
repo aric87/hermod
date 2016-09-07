@@ -37,10 +37,5 @@
     "nodemailer": "^2.6.0",
     "nodemailer-smtp-transport": "^2.7.2",
     "nodemailer-wellknown": "^0.1.10"
-  },
-  "devDependencies": {
-    "babel-eslint": "^6.1.2",
-    "eslint-config-airbnb": "^10.0.1",
-    "eslint-plugin-react": "^6.2.0"
   }
 }

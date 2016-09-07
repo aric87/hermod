@@ -10,10 +10,22 @@ var wellknown = require('nodemailer-wellknown');
 var envVars = require('./env');
 var morgan = require('morgan');
 
+var whitelist = ['http://example1.com', 'http://example2.com'];
+var corsOptions = {
+  origin: function(origin, callback){
+    var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+    callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
+  }
+};
+app.options('*', cors()); 
 app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // get information from html forms
-
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.post('/email', cors(), function(req, res) {
   var {sendTo, subject, text} = req.body;
   if (!sendTo || !subject || !text){
