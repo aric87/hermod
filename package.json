@@ -13,6 +13,10 @@
       "node": true
     }
   },
+  "engines": {
+    "node": "6.5.0",
+    "npm": "3.10.3"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aric87/hermod.git"
