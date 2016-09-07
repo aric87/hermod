@@ -1,0 +1,47 @@
+{
+  "name": "email-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aric87/hermod.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aric87/hermod/issues"
+  },
+  "homepage": "https://github.com/aric87/hermod#readme",
+  "dependencies": {
+    "babel-eslint": "^6.1.2",
+    "body-parser": "^1.15.2",
+    "cors": "^2.8.0",
+    "eslint": "^3.4.0",
+    "eslint-config-airbnb": "^10.0.1",
+    "eslint-plugin-import": "^1.14.0",
+    "eslint-plugin-jsx-a11y": "^2.2.1",
+    "eslint-plugin-react": "^6.2.0",
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
+    "nodemailer": "^2.6.0",
+    "nodemailer-smtp-transport": "^2.7.2",
+    "nodemailer-wellknown": "^0.1.10"
+  },
+  "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "eslint-config-airbnb": "^10.0.1",
+    "eslint-plugin-react": "^6.2.0"
+  }
+}
