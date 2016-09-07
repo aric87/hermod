@@ -9,6 +9,7 @@ var smtpTransport = require('nodemailer-smtp-transport');
 var wellknown = require('nodemailer-wellknown');
 var morgan = require('morgan');
 var fs = require('fs');
+var path = require('path');
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 
 var whitelist = ['http://example1.com', 'http://example2.com'];
