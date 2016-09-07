@@ -1,7 +1,7 @@
 var express  = require('express');
 var app      = express();
-var port     = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var app_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var port     = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var app_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 var bodyParser   = require('body-parser');
 var cors = require('cors');
 var nodemailer = require('nodemailer');
@@ -17,7 +17,7 @@ var corsOptions = {
     callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
   }
 };
-app.options('*', cors()); 
+app.options('*', cors());
 app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // get information from html forms
