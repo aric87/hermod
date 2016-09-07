@@ -8,6 +8,9 @@ var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var wellknown = require('nodemailer-wellknown');
 var morgan = require('morgan');
+var fs = require('fs');
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
+
 var whitelist = ['http://example1.com', 'http://example2.com'];
 var corsOptions = {
   origin: function(origin, callback){
@@ -15,24 +18,26 @@ var corsOptions = {
     callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted);
   }
 };
+
 app.options('*', cors());
-app.use(morgan('dev')); // log every request to the console
+app.use(morgan('combined',{stream:accessLogStream})); // log every request to the console
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // get information from html forms
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+
 app.post('/email', cors(), function(req, res) {
   var {sendTo, subject, text} = req.body;
   if (!sendTo || !subject || !text){
-    var emessage = 'You\'re missing something';
+    var emessage = 'You\'re missing something: \n';
     if (!sendTo){
-      emessage+= 'You need a recieving address.'
+      emessage+= 'You need a recieving address. \n'
     }
-    if (!subject)
-    return res.status(400).json({message:`You're missing somet`})
+    if (!subject){
+      emessage+= 'You need a subject line. \n'
+    }
+    if (!text){
+      emessage+= 'You need some content. \n'
+    }
+    return res.status(400).json({message:emessage})
   }
   var smtpTransport = nodemailer.createTransport({
       service: process.env.SERVICE,
