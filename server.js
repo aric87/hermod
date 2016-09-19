@@ -1,6 +1,6 @@
 var express  = require('express');
 var app      = express();
-var port     = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var port     = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8081;
 var app_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 var bodyParser   = require('body-parser');
 var cors = require('cors');
@@ -10,6 +10,7 @@ var wellknown = require('nodemailer-wellknown');
 var morgan = require('morgan');
 var fs = require('fs');
 var path = require('path');
+var request = require('request');
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 
 var whitelist = ['http://example1.com', 'http://example2.com'];
@@ -46,22 +47,35 @@ app.post('/email', cors(), function(req, res) {
     }
     return res.status(400).json({message:emessage})
   }
-  var mailOptions = {
-      to: sendTo,
-      from: process.env.EMAIL,
-      subject: subject,
-      text: text
-  };
-  smtpTransport.sendMail(mailOptions, function (err) {
-    if (err){
-      return res.status(404).json({message:'error: \n'+ err})
+  request.post(
+    process.env.SLACK,
+    { json: { text: `****************************************************\n\n
+      ${subject}: \n ${text}\n\n
+      ****************************************************` } },
+    function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            return res.status(200).json({message:'The email was sent!'})
+        } else {
+          var mailOptions = {
+              to: sendTo,
+              from: process.env.EMAIL,
+              subject: subject,
+              text: text + '\n Also, Slack failed to report this.'
+          };
 
+          smtpTransport.sendMail(mailOptions, function (err) {
+            if (err){
+              return res.status(404).json({message:'error: \n'+ err})
+            }
+              return res.status(200).json({message:'The email was sent!'})
+          });
+        }
     }
-    return res.status(200).json({message:'The email was sent!'})
-  });
+  );
+
 });
 
 app.listen(port,app_ip_address);
 console.log('The magic happens on port ' + port);
 
-module.exports  = app;
+module.exports = app;
