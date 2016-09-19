@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // get information from html forms
 
 app.post('/email', cors(), function(req, res) {
-  var {sendTo, subject, text} = req.body;
+  var {sendTo, subject, text, slackOption} = req.body;
   if (!sendTo || !subject || !text){
     var emessage = 'You\'re missing something: \n';
     if (!sendTo){
@@ -47,31 +47,41 @@ app.post('/email', cors(), function(req, res) {
     }
     return res.status(400).json({message:emessage})
   }
-  request.post(
-    process.env.SLACK,
-    { json: { text: `****************************************************\n\n
-      ${subject}: \n ${text}\n\n
-      ****************************************************` } },
-    function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            return res.status(200).json({message:'The email was sent!'})
-        } else {
-          var mailOptions = {
-              to: sendTo,
-              from: process.env.EMAIL,
-              subject: subject,
-              text: text + '\n Also, Slack failed to report this.'
-          };
-
-          smtpTransport.sendMail(mailOptions, function (err) {
-            if (err){
-              return res.status(404).json({message:'error: \n'+ err})
-            }
+  if(slackOption){
+    request.post(
+      process.env.SLACK,
+      { json:
+        { text: `****************************************************\n\n
+        ${subject}: \n ${text}\n\n
+        ****************************************************` }
+      },
+      function (error, response, body) {
+          if (!error && response.statusCode == 200) {
               return res.status(200).json({message:'The email was sent!'})
-          });
-        }
-    }
-  );
+          } else {
+            text += '\n Also, Slack failed to report this.';
+            mailOption();
+          }
+      }
+    );
+} else {
+  mailOption();
+}
+  function mailOption() {
+    var mailOptions = {
+        to: sendTo,
+        from: process.env.EMAIL,
+        subject: subject,
+        text: text,
+    };
+
+    smtpTransport.sendMail(mailOptions, function (err) {
+      if (err){
+        return res.status(404).json({message:'error: \n'+ err})
+      }
+        return res.status(200).json({message:'The email was sent!'})
+    });
+  }
 
 });
 
