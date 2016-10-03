@@ -26,7 +26,8 @@ var smtpTransport = nodemailer.createTransport({
             user: process.env.EMAIL,
             pass: process.env.PASS
         }
-})
+});
+app.use(express.static(public));
 app.options('*', cors());
 app.use(morgan('combined',{stream:accessLogStream})); // log every request to the console
 app.use(bodyParser.json());
@@ -37,15 +38,15 @@ app.post('/email', cors(), function(req, res) {
   if (!sendTo || !subject || !text){
     var emessage = 'You\'re missing something: \n';
     if (!sendTo){
-      emessage+= 'You need a recieving address. \n'
+      emessage+= 'You need a recieving address. \n';
     }
     if (!subject){
-      emessage+= 'You need a subject line. \n'
+      emessage+= 'You need a subject line. \n';
     }
     if (!text){
-      emessage+= 'You need some content. \n'
+      emessage+= 'You need some content. \n';
     }
-    return res.status(400).json({message:emessage})
+    return res.status(400).json({message:emessage});
   }
   if(slackOption){
     request.post(
@@ -57,7 +58,7 @@ app.post('/email', cors(), function(req, res) {
       },
       function (error, response, body) {
           if (!error && response.statusCode == 200) {
-              return res.status(200).json({message:'The email was sent!'})
+              return res.status(200).json({message:'The email was sent!'});
           } else {
             text += '\n Also, Slack failed to report this.';
             mailOption();
@@ -77,9 +78,9 @@ app.post('/email', cors(), function(req, res) {
 
     smtpTransport.sendMail(mailOptions, function (err) {
       if (err){
-        return res.status(404).json({message:'error: \n'+ err})
+        return res.status(404).json({message:'error: \n'+ err});
       }
-        return res.status(200).json({message:'The email was sent!'})
+        return res.status(200).json({message:'The email was sent!'});
     });
   }
 
